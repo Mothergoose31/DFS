@@ -3,6 +3,7 @@ package master;
 java.io.IOException;
 java.net.ServerSocket;
 java.net.Socket;
+import common.Logger;
 
 
 public class Controller {
@@ -22,20 +23,63 @@ public class Controller {
         this.logger = ControllerLogger.getInstance();
     }
 
+    // ================================================================================================================
 
+    // ================================================================================================================
 
     public void startAndListen() {
-        
         try {
-            logger.info("initializing server");
+            logger.info("Initializing server");
             serverSocket = new ServerSocket(cport);
             logger.info("Starting controller on port " + cport);
-            while(
-
-            )
+            while (true) {
+                try {
+                    Socket client = serverSocket.accept();
+                    logger.info("Accepted connection from " + client.getRemoteSocketAddress());
+                    new Thread(() -> {
+                        try {
+                            handleClient(client);
+                        } catch (Exception e) {
+                            logger.error("Error handling client: " + e.getMessage());
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                client.close();
+                            } catch (IOException e) {
+                                logger.error("Error closing client socket: " + e.getMessage());
+                            }
+                        }
+                    }).start();
+                } catch (IOException e) {
+                    logger.error("Error accepting connection: " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Error starting controller: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                try {
+                    serverSocket.close();
+                    logger.info("Server socket closed");
+                } catch (IOException e) {
+                    logger.error("Error closing server socket: " + e.getMessage());
+                }
+            }
         }
     }
 
+    // ================================================================================================================
+
+    // ================================================================================================================
+
+    public void handleClient(Socket client){
+
+    }
+
+    // ================================================================================================================
+
+    // ================================================================================================================
 
     public static void main(String[] args){
         if(args.length != 4){
@@ -48,7 +92,10 @@ public class Controller {
         int rebalance_period = Integer.parseInt(args[3]);
         Controller controller = new Controller(cport, R, timeout, rebalance_period);
         try {
-            // Start the controller
+            ControllerLogger.init(Logger.LoggingType.ON_FILE_AND_TERMINAL);
+            new Controller(cport, R, timeout, rebalance_period).start();
+        } catch (IOException e) {
+            System.err.println("Error initializing ControllerLogger: " + e.getMessage());
         }
     }
 
