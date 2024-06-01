@@ -76,8 +76,19 @@ public class Controller {
     public void handleClient(Socket client){
         try
         {
-            BufferReader in
-            PrintWriter out
+            BufferReader in  = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            PrintWriter out  = new PrintWriter(client.getOutputStream(), true);
+            String request; 
+
+            while ((request = in.readLine()) != null) {
+                logger.info("Received request: " + request);
+                String response = processRequest(request);
+                logger.info("Sending response: " + response);
+                out.println(response);
+            }
+        }catch (IOException e){
+            logger.error("Error handling client: " + e.getMessage());
+            e.printStackTrace();
         }
         
         private String processRequest(String request){
@@ -96,6 +107,20 @@ public class Controller {
                     return "Unknown request";
             }
         }
+        private String handleUpload(){
+    
+        }
+
+        private String handleDownload(){
+    
+        }
+
+        private String handleList(){
+    
+        }
+
+        private String handleDelete(){
+    
         }
     }
 
