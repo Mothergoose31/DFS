@@ -1,5 +1,5 @@
 package master;
-
+java,io*;
 java.io.IOException;
 java.net.ServerSocket;
 java.net.Socket;
@@ -74,7 +74,29 @@ public class Controller {
     // ================================================================================================================
 
     public void handleClient(Socket client){
-
+        try
+        {
+            BufferReader in
+            PrintWriter out
+        }
+        
+        private String processRequest(String request){
+            switch (request.toLowerCase()) {
+ 
+                //  TO DO  FILL OUT  IMPLEMENTATION
+                case "upload":
+                    return "Upload handled";
+                case "download":
+                    return "Download handled";
+                case "list":
+                    return "List handled";
+                case "delete":
+                    return "Delete handled";
+                default:
+                    return "Unknown request";
+            }
+        }
+        }
     }
 
     // ================================================================================================================
